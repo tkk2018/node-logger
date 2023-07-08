@@ -23,6 +23,7 @@ node_modules/
 ## folders
 /temp
 /logs
+dist
 
 # certificate
 **/*.crt

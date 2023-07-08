@@ -22,6 +22,9 @@ export function stringify(log, indent) {
     return stringifySafe(log, errorReplacer, indent);
 }
 ;
+/**
+ * Boilerplate logger class. This will auto create the ID of Log if not provided.
+ */
 export class BaseLogger {
     level;
     constructor(level) {

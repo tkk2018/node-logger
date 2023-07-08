@@ -7,7 +7,8 @@ import { v1 as uuidv1 } from "uuid";
 export type LogLevel = "error" | "warn" | "info" | "debug";
 
 export type Log<T> = {
-  id?: string;
+  id?: string; // unique id
+  reference_id?: string; // process id
   message: string;
   type: string | "null";
   meta?: T;
@@ -52,6 +53,9 @@ export function stringify(log: any, indent?: JsonIndent) {
   return stringifySafe(log, errorReplacer, indent);
 };
 
+/**
+ * Boilerplate logger class. This will auto create the ID of Log if not provided.
+ */
 export abstract class BaseLogger implements Logger {
   level: number;
 
