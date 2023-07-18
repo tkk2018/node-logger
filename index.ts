@@ -6,27 +6,27 @@ import { v1 as uuidv1 } from "uuid";
 
 export type LogLevel = "error" | "warn" | "info" | "debug";
 
-export type Log<T> = {
+export interface LogProps<T> {
   id?: string; // unique id
   reference_id?: string; // process id
-  message: string;
-  type: string | "null";
+  message?: string;
+  type?: string | "null";
   meta?: T;
 };
 
-export type LogConfig<T> = Log<T> & { level: LogLevel };
+export type LogConfig<T> = LogProps<T> & { level: LogLevel } & { id: string };
 
 export interface Logger {
   get level(): number;
   debug(message: string): void;
-  debug<T>(content: Log<T>): void;
+  debug<T>(content: LogProps<T>): void;
   info(message: string): void;
-  info<T>(content: Log<T>): void;
+  info<T>(content: LogProps<T>): void;
   warn(message: string): void;
-  warn<T>(content: Log<T>): void;
+  warn<T>(content: LogProps<T>): void;
   error(message: string): void;
-  error<T>(content: Log<T>): void;
-  log<T>(level: LogLevel, content: Log<T>): void;
+  error<T>(content: LogProps<T>): void;
+  log<T>(level: LogLevel, content: LogProps<T>): void;
 };
 
 export const LogLevels = {
@@ -63,63 +63,62 @@ export abstract class BaseLogger implements Logger {
     this.level = LogLevels[level];
   }
 
-  debug<T>(log: string | Log<T>): void {
+  debug<T>(log: string | LogProps<T>): void {
     if (isString(log)) {
       this.debug<null>({
         message: log as string,
-        type: "null",
       });
     }
     else {
-      this.log("debug", log as Log<T>);
+      this.log("debug", log as LogProps<T>);
     }
   }
 
-  info<T>(log: string | Log<T>): void {
+  info<T>(log: string | LogProps<T>): void {
     if (isString(log)) {
       this.info<null>({
         message: log as string,
-        type: "null",
       });
     }
     else {
-      this.log("info", log as Log<T>);
+      this.log("info", log as LogProps<T>);
     }
   }
 
-  warn<T>(log: string | Log<T>): void {
+  warn<T>(log: string | LogProps<T>): void {
     if (isString(log)) {
       this.warn<null>({
         message: log as string,
-        type: "null",
       });
     }
     else {
-      this.log("warn", log as Log<T>);
+      this.log("warn", log as LogProps<T>);
     }
   }
 
-  error<T>(log: string | Log<T>): void {
+  error<T>(log: string | LogProps<T>): void {
     if (isString(log)) {
       this.error<null>({
         message: log as string,
-        type: "null",
       });
     }
     else {
-      this.log("error", log as Log<T>);
+      this.log("error", log as LogProps<T>);
     }
   }
 
-  log<T>(level: LogLevel, log: Log<T>) {
+  log<T>(level: LogLevel, log: LogProps<T>) {
     if (this.level >= LogLevels[level]) {
-      const config = { level, ...log };
-      config.id = config.id ?? uuidv1();
+      const base: LogConfig<T> = {
+        level,
+        id: log.id ?? uuidv1(),
+      };
+      const config = { ...log, ...base };
       this.write<T>(config);
     }
   }
 
-  abstract write<T>(log: LogConfig<T>): void;
+  abstract write<T>(config: LogConfig<T>): void;
 };
 
 export class ConsoleLogger extends BaseLogger {
@@ -130,7 +129,7 @@ export class ConsoleLogger extends BaseLogger {
     this.#indent = indent;
   }
 
-  write<T>(log: LogConfig<T>): void {
-    console[log.level](stringify(log, this.#indent));
+  write<T>(config: LogConfig<T>): void {
+    console[config.level](stringify(config, this.#indent));
   }
 };
