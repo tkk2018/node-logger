@@ -21,9 +21,10 @@ node_modules/
 !.env.template
 
 ## folders
-/temp
-/logs
+temp
+logs
 dist
+tsconfig.tsbuildinfo
 
 # certificate
 **/*.crt
