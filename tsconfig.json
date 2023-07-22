@@ -9,7 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node16",
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "composite": true,
   },
   "exclude": [
     "node_modules",
