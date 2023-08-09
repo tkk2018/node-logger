@@ -1,5 +1,3 @@
-"use strict";
-
 import stringifySafe from "json-stringify-safe";
 import { serializeError } from "serialize-error";
 import { v1 as uuidv1 } from "uuid";
