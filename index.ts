@@ -131,3 +131,12 @@ export class ConsoleLogger extends BaseLogger {
     console[config.level](stringify(config, this.#indent));
   }
 };
+
+export class EmptyLogger extends BaseLogger {
+  constructor() {
+    super("error");
+  }
+
+  write<T>(): void {
+  }
+};
